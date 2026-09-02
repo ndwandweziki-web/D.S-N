@@ -1,272 +1,310 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>D.S & N | Enterprise 3D Studio</title>
-  <style>
-    :root {
-      --bg-color: #0b0f19;
-      --panel-bg: rgba(18, 24, 38, 0.98);
-      --accent: #00e5ff;
-      --accent-hover: #00b3cc;
-      --text: #ffffff;
-      --text-muted: #8a99ad;
-      --border: #1e293b;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body, html { width: 100%; height: 100%; overflow: hidden; background: var(--bg-color); color: var(--text); }
-    
-    #app-container { display: flex; width: 100vw; height: 100vh; flex-direction: column; }
-    @media (min-width: 900px) { #app-container { flex-direction: row; } }
-
-    /* 3D Viewport Stage */
-    #viewport-container { flex: 1; position: relative; width: 100%; height: 50%; background: radial-gradient(circle at center, #1a233a 0%, #0b0f19 100%); }
-    @media (min-width: 900px) { #viewport-container { height: 100%; } }
-    #canvas3d { width: 100%; height: 100%; display: block; cursor: grab; }
-    
-    .viewport-overlay { position: absolute; top: 12px; left: 12px; pointer-events: none; }
-    .badge { background: rgba(0, 229, 255, 0.15); border: 1px solid var(--accent); color: var(--accent); font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
-
-    /* Sidebar Controls */
-    #sidebar { flex: 1; height: 50%; background: var(--panel-bg); border-top: 1px solid var(--border); display: flex; flex-direction: column; z-index: 10; overflow-y: auto; }
-    @media (min-width: 900px) { #sidebar { width: 420px; height: 100%; border-top: none; border-left: 1px solid var(--border); } }
-
-    .sidebar-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-    .brand-title { font-weight: 800; font-size: 18px; letter-spacing: 1px; }
-    .brand-title span { color: var(--accent); }
-
-    .control-section { padding: 14px 18px; border-bottom: 1px solid var(--border); }
-    .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 10px; }
-
-    /* Category Navigation */
-    .category-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
-    .category-scroll::-webkit-scrollbar { display: none; }
-    .cat-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #ccc; padding: 6px 14px; border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; }
-    .cat-btn.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
-
-    /* Garment Selection Grid */
-    .grid-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .grid-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 10px 4px; text-align: center; color: var(--text); font-size: 11px; cursor: pointer; }
-    .grid-btn.active { border-color: var(--accent); background: rgba(0, 229, 255, 0.1); color: var(--accent); font-weight: 700; }
-
-    /* Upload & Color Picker Tools */
-    .tools-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
-    .color-picker-input { -webkit-appearance: none; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; background: transparent; }
-    .color-picker-input::-webkit-color-swatch-wrapper { padding: 0; }
-    .color-picker-input::-webkit-color-swatch { border: 2px solid #fff; border-radius: 50%; }
-
-    .upload-btn { flex: 1; background: rgba(255,255,255,0.08); border: 1px dashed var(--accent); color: #fff; padding: 10px; border-radius: 8px; font-size: 12px; text-align: center; cursor: pointer; }
-    
-    /* Decal Transform Controls */
-    .transform-controls { background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-    .slider-group { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--text-muted); }
-    .slider-group input { width: 60%; accent-color: var(--accent); }
-
-    .btn-action { width: 100%; background: var(--accent); color: #000; font-weight: 800; border: none; padding: 14px; border-radius: 8px; font-size: 13px; text-transform: uppercase; cursor: pointer; margin-top: 10px; }
-  </style>
-
-  <!-- Three.js + OrbitControls + GLTFLoader -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boma Wear Pro 3D Studio</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
-<body>
+<body class="bg-gray-950 text-white h-screen flex flex-col overflow-hidden font-sans">
 
-  <div id="app-container">
-    <div id="viewport-container">
-      <div class="viewport-overlay">
-        <div class="badge">D.S & N 3D Engine v3.0</div>
-      </div>
-      <canvas id="canvas3d"></canvas>
+    <!-- Top Navigation -->
+    <header class="p-4 bg-gray-900 border-b border-gray-800 flex justify-between items-center z-20">
+        <div>
+            <h1 class="font-black text-sm tracking-wider uppercase text-indigo-400">Boma Wear Pro Studio</h1>
+            <p id="active-mode" class="text-xs text-gray-400">Mode: 3D Realistic Garment Customizer</p>
+        </div>
+        <button onclick="toggleInspirationModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 rounded text-xs font-bold transition">✨ AI Inspiration Gallery</button>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="flex flex-1 relative overflow-hidden">
+        
+        <!-- 3D Viewport with 2D Decal Overlay Layer -->
+        <div id="canvas-container" class="flex-1 h-full relative cursor-grab active:cursor-grabbing bg-gradient-to-b from-gray-900 to-gray-950 flex items-center justify-center">
+            
+            <!-- Interactive Drag & Drop Decal / Text Layer anchored over the 3D model -->
+            <div id="decal-overlay" class="absolute hidden border border-dashed border-indigo-400 bg-indigo-500/10 p-2 select-none flex items-center justify-center cursor-move" style="width: 120px; height: 120px; top: 40%; left: 45%; touch-action: none;">
+                <img id="user-decal-img" src="" class="w-full h-full object-contain pointer-events-none hidden" alt="Decal">
+                <span id="user-decal-text" class="text-xs font-bold text-white text-center drop-shadow-md"></span>
+            </div>
+        </div>
+
+        <!-- Customization Control Center -->
+        <div class="w-91 bg-gray-900 border-l border-gray-800 p-4 flex flex-col h-full overflow-y-auto space-y-5 z-20">
+            
+            <!-- Category Selection -->
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Garment Type</label>
+                <select id="garment-select" onchange="changeGarment(this.value)" class="w-full bg-gray-800 border border-gray-700 rounded p-2 text-sm font-semibold focus:outline-none focus:border-indigo-500">
+                    <option value="tshirt">Classic T-Shirt</option>
+                    <option value="hoodie">Heavyweight Hoodie</option>
+                    <option value="jacket">Techwear Jacket / Suit</option>
+                    <option value="pants">Streetwear Pants / Trousers</option>
+                    <option value="cap">Snapback Cap / Beanie</option>
+                </select>
+            </div>
+
+            <!-- Multi-Zone Color Painting -->
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Multi-Zone Color Palette</label>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between bg-gray-800 p-2 rounded">
+                        <span class="text-xs text-gray-300">Torso / Main Body</span>
+                        <input type="color" value="#ffffff" onchange="setZoneColor('torso', this.value)" class="w-6 h-6 rounded bg-transparent border-0 cursor-pointer">
+                    </div>
+                    <div class="flex items-center justify-between bg-gray-800 p-2 rounded">
+                        <span class="text-xs text-gray-300">Sleeves / Accents</span>
+                        <input type="color" value="#ffffff" onchange="setZoneColor('sleeves', this.value)" class="w-6 h-6 rounded bg-transparent border-0 cursor-pointer">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fabric Finish -->
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Realistic Fabric Weave</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="setMaterial('cotton')" class="p-2 text-xs font-semibold bg-gray-800 hover:bg-indigo-600 rounded border border-gray-700">Combed Cotton</button>
+                    <button onclick="setMaterial('silk')" class="p-2 text-xs font-semibold bg-gray-800 hover:bg-indigo-600 rounded border border-gray-700">Satin / Silk</button>
+                    <button onclick="setMaterial('denim')" class="p-2 text-xs font-semibold bg-gray-800 hover:bg-indigo-600 rounded border border-gray-700">Heavy Denim</button>
+                    <button onclick="setMaterial('leather')" class="p-2 text-xs font-semibold bg-gray-800 hover:bg-indigo-600 rounded border border-gray-700">Matte Leather</button>
+                </div>
+            </div>
+
+            <!-- Graphic & Text Customizer -->
+            <div class="space-y-3 pt-2 border-t border-gray-800">
+                <label class="block text-xs font-bold uppercase tracking-widest text-indigo-400">Add Graphics & Text</label>
+                
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">Upload Design Image</label>
+                    <input type="file" id="image-input" accept="image/*" class="block w-full text-xs text-gray-400 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-bold file:bg-gray-800 file:text-white hover:file:bg-gray-700 cursor-pointer">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">Custom Text Overlay</label>
+                    <input type="text" id="text-input" placeholder="Type custom text..." oninput="updateTextOverlay(this.value)" class="w-full bg-gray-800 border border-gray-700 rounded p-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div class="flex space-x-2">
+                    <div class="flex-1">
+                        <label class="block text-[10px] text-gray-400 mb-1">Text Color</label>
+                        <input type="color" value="#000000" onchange="setTextColor(this.value)" class="w-full h-7 rounded bg-gray-800 border border-gray-700 cursor-pointer">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-[10px] text-gray-400 mb-1">Scale Size</label>
+                        <input type="range" min="50" max="250" value="120" oninput="resizeDecal(this.value)" class="w-full accent-indigo-500 mt-2">
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <div id="sidebar">
-      <div class="sidebar-header">
-        <div class="brand-title">D.S <span>&</span> N</div>
-        <div style="font-size: 11px; color: var(--accent);">3D Customizer</div>
-      </div>
-
-      <!-- Categories -->
-      <div class="control-section">
-        <div class="section-title">Categories</div>
-        <div class="category-scroll">
-          <button class="cat-btn active" onclick="filterCat('all', this)">All</button>
-          <button class="cat-btn" onclick="filterCat('tops', this)">Tops</button>
-          <button class="cat-btn" onclick="filterCat('bottoms', this)">Bottoms</button>
-          <button class="cat-btn" onclick="filterCat('headwear', this)">Hats</button>
+    <!-- AI Inspiration Modal Overlay -->
+    <div id="inspiration-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-6">
+        <div class="bg-gray-900 border border-gray-800 rounded-xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center">
+                <h2 class="font-extrabold text-base text-indigo-400 uppercase tracking-wider">AI Inspiration & Theme Gallery</h2>
+                <button onclick="toggleInspirationModal()" class="text-gray-400 hover:text-white font-bold text-lg">✕</button>
+            </div>
+            <p class="text-xs text-gray-400">Select an AI-curated design concept to instantly style your apparel base:</p>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <button onclick="applyTheme('Anime Cyberpunk', '#ff0055', '#00ffff')" class="p-3 bg-gray-800 hover:bg-gray-700 rounded-lg text-left border border-gray-700 transition">
+                    <span class="block text-xs font-bold text-indigo-300">⚡ Anime Cyberpunk</span>
+                    <span class="block text-[10px] text-gray-400 mt-1">Neon accents & sci-fi motifs</span>
+                </button>
+                <button onclick="applyTheme('Cinematic Noir', '#111111', '#cccccc')" class="p-3 bg-gray-800 hover:bg-gray-700 rounded-lg text-left border border-gray-700 transition">
+                    <span class="block text-xs font-bold text-indigo-300">🎬 Movie Star Minimal</span>
+                    <span class="block text-[10px] text-gray-400 mt-1">Sleek monochromatic styling</span>
+                </button>
+                <button onclick="applyTheme('Deep Space', '#0b0b1a', '#7c3aed')" class="p-3 bg-gray-800 hover:bg-gray-700 rounded-lg text-left border border-gray-700 transition">
+                    <span class="block text-xs font-bold text-indigo-300">🌌 Deep Space</span>
+                    <span class="block text-[10px] text-gray-400 mt-1">Cosmic gradients & starlight</span>
+                </button>
+                <button onclick="applyTheme('Apex Predator', '#3f1f0a', '#b45309')" class="p-3 bg-gray-800 hover:bg-gray-700 rounded-lg text-left border border-gray-700 transition">
+                    <span class="block text-xs font-bold text-indigo-300">🐅 Animal Instinct</span>
+                    <span class="block text-[10px] text-gray-400 mt-1">Bold predator prints</span>
+                </button>
+                <button onclick="applyTheme('Hypercar Carbon', '#1f2937', '#ef4444')" class="p-3 bg-gray-800 hover:bg-gray-700 rounded-lg text-left border border-gray-700 transition">
+                    <span class="block text-xs font-bold text-indigo-300">🏎️ Car Culture</span>
+                    <span class="block text-[10px] text-gray-400 mt-1">Racing stripes & carbon tones</span>
+                </button>
+                <button onclick="applyTheme('Botanical Earth', '#064e3b', '#10b981')" class="p-3 bg-gray-800 hover:bg-gray-700 rounded-lg text-left border border-gray-700 transition">
+                    <span class="block text-xs font-bold text-indigo-300">🌿 Organic Nature</span>
+                    <span class="block text-[10px] text-gray-400 mt-1">Earthy tones & flora</span>
+                </button>
+            </div>
         </div>
-      </div>
-
-      <!-- Item Grid -->
-      <div class="control-section">
-        <div class="section-title">Select Apparel</div>
-        <div class="grid-selector" id="itemGrid"></div>
-      </div>
-
-      <!-- Custom Upload & Full Color Wheel -->
-      <div class="control-section">
-        <div class="section-title">Fabric Color & Upload Custom Design</div>
-        <div class="tools-row">
-          <input type="color" id="hexPicker" class="color-picker-input" value="#111111" onchange="updateFabricColor(this.value)" />
-          <label class="upload-btn">
-            📷 Upload From Phone
-            <input type="file" id="imageUploader" accept="image/*" style="display:none;" onchange="handleImageUpload(event)" />
-          </label>
-        </div>
-
-        <div class="transform-controls">
-          <div class="slider-group">
-            <span>Design Size</span>
-            <input type="range" id="decalScale" min="0.1" max="1.0" step="0.05" value="0.3" oninput="updateDecalTransform()" />
-          </div>
-          <div class="slider-group">
-            <span>Position Y</span>
-            <input type="range" id="decalPosY" min="-0.5" max="0.5" step="0.02" value="0" oninput="updateDecalTransform()" />
-          </div>
-          <div class="slider-group">
-            <span>Position X</span>
-            <input type="range" id="decalPosX" min="-0.5" max="0.5" step="0.02" value="0" oninput="updateDecalTransform()" />
-          </div>
-        </div>
-      </div>
-
-      <div class="control-section">
-        <button class="btn-action" onclick="alert('Order specification captured! Exporting 3D render...')">Submit Custom Order</button>
-      </div>
     </div>
-  </div>
 
-  <script>
-    // Remote 3D GLTF Model Catalog
-    const catalog = [
-      { id: 'shirt', name: 'T-Shirt', cat: 'tops', url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Shirt/glTF-Binary/Shirt.glb' },
-      { id: 'hoodie', name: 'Hoodie Base', cat: 'tops', url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Corset/glTF-Binary/Corset.glb' },
-      { id: 'cap', name: 'Hat / Cap', cat: 'headwear', url: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF-Binary/Avocado.glb' }
-    ];
+    <script>
+        // Three.js High-End Photorealistic Scene Setup
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
 
-    let currentItem = catalog[0];
-    let scene, camera, renderer, controls, loadedMesh, loader;
-    let customTexture = null;
+        const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(0, 1.2, 3.2);
 
-    window.addEventListener('load', () => {
-      init3D();
-      renderGrid('all');
-      load3DModel(currentItem.url);
-    });
-
-    function init3D() {
-      const container = document.getElementById('viewport-container');
-      scene = new THREE.Scene();
-      
-      camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-      camera.position.set(0, 0, 2.5);
-
-      renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas3d'), antialias: true, alpha: true });
-      renderer.setSize(container.clientWidth, container.clientHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-      scene.add(new THREE.AmbientLight(0xffffff, 0.8));
-      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-      dirLight.position.set(5, 10, 7);
-      scene.add(dirLight);
-
-      controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-
-      loader = new THREE.GLTFLoader();
-
-      window.addEventListener('resize', () => {
-        camera.aspect = container.clientWidth / container.clientHeight;
-        camera.updateProjectionMatrix();
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(container.clientWidth, container.clientHeight);
-      });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        container.appendChild(renderer.domElement);
 
-      function animate() {
-        requestAnimationFrame(animate);
-        controls.update();
-        renderer.render(scene, camera);
-      }
-      animate();
-    }
+        // Studio Multi-Point Lighting for Cinematic Gloss & Depth
+        scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+        const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
+        keyLight.position.set(4, 7, 5);
+        scene.add(keyLight);
+        const fillLight = new THREE.DirectionalLight(0x90b0ff, 1.0);
+        fillLight.position.set(-5, 3, -3);
+        scene.add(fillLight);
 
-    function load3DModel(url) {
-      if (loadedMesh) scene.remove(loadedMesh);
+        // Multi-Material Zones for Color Blocking
+        const torsoMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8, metalness: 0.05 });
+        const sleeveMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8, metalness: 0.05 });
 
-      loader.load(url, (gltf) => {
-        loadedMesh = gltf.scene;
-        
-        // Center model automatically
-        const box = new THREE.Box3().setFromObject(loadedMesh);
-        const center = box.getCenter(new THREE.Vector3());
-        loadedMesh.position.sub(center);
-        
-        scene.add(loadedMesh);
-        updateFabricColor(document.getElementById('hexPicker').value);
-      });
-    }
+        let garmentGroup = new THREE.Group();
+        scene.add(garmentGroup);
 
-    function updateFabricColor(hex) {
-      if (!loadedMesh) return;
-      loadedMesh.traverse((child) => {
-        if (child.isMesh) {
-          child.material.color = new THREE.Color(hex);
+        function buildRealisticGarment(type) {
+            garmentGroup.clear();
+            let mainGeo, sleeveGeo;
+
+            if (type === 'tshirt') {
+                mainGeo = new THREE.CylinderGeometry(0.55, 0.65, 1.3, 64);
+                const mainMesh = new THREE.Mesh(mainGeo, torsoMaterial);
+                garmentGroup.add(mainMesh);
+            } else if (type === 'hoodie') {
+                mainGeo = new THREE.BoxGeometry(1.05, 1.35, 0.55);
+                const mainMesh = new THREE.Mesh(mainGeo, torsoMaterial);
+                garmentGroup.add(mainMesh);
+            } else if (type === 'pants') {
+                mainGeo = new THREE.CylinderGeometry(0.38, 0.32, 1.7, 64);
+                const mainMesh = new THREE.Mesh(mainGeo, torsoMaterial);
+                garmentGroup.add(mainMesh);
+            } else {
+                mainGeo = new THREE.SphereGeometry(0.48, 32, 32);
+                const mainMesh = new THREE.Mesh(mainGeo, torsoMaterial);
+                garmentGroup.add(mainMesh);
+            }
         }
-      });
-    }
 
-    function handleImageUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
+        buildRealisticGarment('tshirt');
 
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const img = new Image();
-        img.src = event.target.result;
-        img.onload = () => {
-          customTexture = new THREE.Texture(img);
-          customTexture.needsUpdate = true;
-          applyTextureToMesh();
-        };
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function applyTextureToMesh() {
-      if (!loadedMesh || !customTexture) return;
-      loadedMesh.traverse((child) => {
-        if (child.isMesh) {
-          child.material.map = customTexture;
-          child.material.needsUpdate = true;
+        function changeGarment(type) {
+            buildRealisticGarment(type);
         }
-      });
-    }
 
-    function renderGrid(cat) {
-      const grid = document.getElementById('itemGrid');
-      grid.innerHTML = '';
-      const items = cat === 'all' ? catalog : catalog.filter(i => i.cat === cat);
+        function setZoneColor(zone, colorHex) {
+            if (zone === 'torso') torsoMaterial.color.set(colorHex);
+            if (zone === 'sleeves') sleeveMaterial.color.set(colorHex);
+        }
 
-      items.forEach(item => {
-        const btn = document.createElement('div');
-        btn.className = `grid-btn ${item.id === currentItem.id ? 'active' : ''}`;
-        btn.innerText = item.name;
-        btn.onclick = () => {
-          document.querySelectorAll('.grid-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currentItem = item;
-          load3DModel(item.url);
-        };
-        grid.appendChild(btn);
-      });
-    }
+        function setMaterial(fabric) {
+            if (fabric === 'cotton') {
+                torsoMaterial.roughness = 0.9; torsoMaterial.metalness = 0.0;
+            } else if (fabric === 'silk') {
+                torsoMaterial.roughness = 0.2; torsoMaterial.metalness = 0.4;
+            } else if (fabric === 'denim') {
+                torsoMaterial.roughness = 0.85; torsoMaterial.metalness = 0.1;
+            } else if (fabric === 'leather') {
+                torsoMaterial.roughness = 0.4; torsoMaterial.metalness = 0.2;
+            }
+        }
 
-    function filterCat(cat, el) {
-      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-      el.classList.add('active');
-      renderGrid(cat);
-    }
-  </script>
+        // UI Decal & Text Management
+        const overlay = document.getElementById('decal-overlay');
+        const decalImg = document.getElementById('user-decal-img');
+        const decalText = document.getElementById('user-decal-text');
+
+        document.getElementById('image-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                decalImg.src = evt.target.result;
+                decalImg.classList.remove('hidden');
+                overlay.classList.remove('hidden');
+            }
+            reader.readAsDataURL(file);
+        });
+
+        function updateTextOverlay(val) {
+            if (val.trim() !== '') {
+                decalText.innerText = val;
+                overlay.classList.remove('hidden');
+            } else {
+                decalText.innerText = '';
+                if (decalImg.classList.contains('hidden')) overlay.classList.add('hidden');
+            }
+        }
+
+        function setTextColor(hex) {
+            decalText.style.color = hex;
+        }
+
+        function resizeDecal(size) {
+            overlay.style.width = `${size}px`;
+            overlay.style.height = `${size}px`;
+        }
+
+        function toggleInspirationModal() {
+            const modal = document.getElementById('inspiration-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function applyTheme(name, primaryColor, accentColor) {
+            setZoneColor('torso', primaryColor);
+            setZoneColor('sleeves', accentColor);
+            updateTextOverlay(name);
+            toggleInspirationModal();
+        }
+
+        // Drag & Rotate Mechanics for 3D Viewport
+        let isDragging = false, prevX = 0, prevY = 0;
+        container.addEventListener('pointerdown', (e) => { isDragging = true; prevX = e.clientX; prevY = e.clientY; });
+        container.addEventListener('pointermove', (e) => {
+            if (!isDragging) return;
+            garmentGroup.rotation.y += (e.clientX - prevX) * 0.01;
+            prevX = e.clientX;
+        });
+        container.addEventListener('pointerup', () => { isDragging = false; });
+
+        // Decal Overlay Touch/Mouse Dragging
+        let isDecalDragging = false, startX, startY;
+        overlay.addEventListener('pointerdown', (e) => {
+            isDecalDragging = true;
+            startX = e.clientX - overlay.offsetLeft;
+            startY = e.clientY - overlay.offsetTop;
+            overlay.setPointerCapture(e.pointerId);
+            e.stopPropagation();
+        });
+        overlay.addEventListener('pointermove', (e) => {
+            if (!isDecalDragging) return;
+            overlay.style.left = `${e.clientX - startX}px`;
+            overlay.style.top = `${e.clientY - startY}px`;
+        });
+        overlay.addEventListener('pointerup', (e) => {
+            isDecalDragging = false;
+            overlay.releasePointerCapture(e.pointerId);
+        });
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+    </script>
 </body>
 </html>
 
